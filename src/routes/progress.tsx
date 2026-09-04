@@ -15,10 +15,16 @@ export const Route = createFileRoute("/progress")({
 });
 
 function ProgressPage() {
-  const { studiedCardIds, customCards, lastQuiz, bestQuizPercent, quizzesTaken } = useStudyStore();
+  const { studiedCardIds, cardsBySubject, lastQuiz, bestQuizPercent, quizzesTaken } = useStudyStore();
 
-  const totalCards = HISTORY_FLASHCARDS.length + customCards.length;
-  const studiedCount = studiedCardIds.length;
+  const totalCards =
+    HISTORY_FLASHCARDS.length +
+    Object.values(cardsBySubject).reduce((sum, cards) => sum + cards.length, 0);
+  const validIds = new Set([
+    ...HISTORY_FLASHCARDS.map((c) => c.id),
+    ...Object.values(cardsBySubject).flat().map((c) => c.id),
+  ]);
+  const studiedCount = studiedCardIds.filter((id) => validIds.has(id)).length;
   const studiedPercent = totalCards > 0 ? Math.round((studiedCount / totalCards) * 100) : 0;
   const lastQuizPercent = lastQuiz ? Math.round((lastQuiz.score / lastQuiz.total) * 100) : null;
 
@@ -98,6 +104,7 @@ function ProgressPage() {
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <Link
               to="/flashcards"
+              search={{ subject: "History" }}
               className="rounded-full bg-brand px-6 py-3 font-bold text-white shadow-lg shadow-brand/30 transition hover:brightness-105"
             >
               Study flashcards
