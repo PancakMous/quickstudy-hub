@@ -24,7 +24,7 @@ function FlashcardsPage() {
   const [answer, setAnswer] = useState("");
 
   const safeIndex = Math.min(index, cards.length - 1);
-  const card = cards[safeIndex];
+  const card = cards[safeIndex]!;
 
   useEffect(() => {
     if (card) studyActions.markStudied(card.id);

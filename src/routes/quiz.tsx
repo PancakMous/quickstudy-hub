@@ -25,10 +25,10 @@ function QuizPage() {
   const [finished, setFinished] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
 
-  const question = HISTORY_QUIZ[index];
+  const question = HISTORY_QUIZ[index]!;
   const answered = answers.filter((a) => a !== null).length;
   const runningScore = answers.reduce<number>(
-    (sum, a, i) => sum + (a === HISTORY_QUIZ[i].correctIndex ? 1 : 0),
+    (sum, a, i) => sum + (a === HISTORY_QUIZ[i]!.correctIndex ? 1 : 0),
     0,
   );
 
@@ -39,7 +39,7 @@ function QuizPage() {
 
   const finish = () => {
     const score = answers.reduce<number>(
-      (sum, a, i) => sum + (a === HISTORY_QUIZ[i].correctIndex ? 1 : 0),
+      (sum, a, i) => sum + (a === HISTORY_QUIZ[i]!.correctIndex ? 1 : 0),
       0,
     );
     setFinalScore(score);
