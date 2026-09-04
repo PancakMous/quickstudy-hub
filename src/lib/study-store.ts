@@ -2,7 +2,8 @@ import { useSyncExternalStore } from "react";
 import type { Flashcard } from "./study-data";
 
 export type StudyState = {
-  customCards: Flashcard[];
+  /** Custom flashcards, keyed by subject name (e.g. "History", "Biology"). */
+  cardsBySubject: Record<string, Flashcard[]>;
   studiedCardIds: string[];
   lastQuiz: { score: number; total: number } | null;
   bestQuizPercent: number | null;
@@ -10,10 +11,10 @@ export type StudyState = {
   extraSubjects: string[];
 };
 
-const STORAGE_KEY = "quickstudy-v1";
+const STORAGE_KEY = "quickstudy-v2";
 
 const DEFAULT_STATE: StudyState = {
-  customCards: [],
+  cardsBySubject: {},
   studiedCardIds: [],
   lastQuiz: null,
   bestQuizPercent: null,
@@ -25,8 +26,19 @@ function loadState(): StudyState {
   if (typeof window === "undefined") return DEFAULT_STATE;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_STATE;
-    return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+    if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+    // migrate v1: flat customCards belonged to History
+    const legacy = window.localStorage.getItem("quickstudy-v1");
+    if (legacy) {
+      const old = JSON.parse(legacy);
+      return {
+        ...DEFAULT_STATE,
+        ...old,
+        cardsBySubject: old.customCards?.length ? { History: old.customCards } : {},
+        customCards: undefined,
+      };
+    }
+    return DEFAULT_STATE;
   } catch {
     return DEFAULT_STATE;
   }
@@ -57,13 +69,14 @@ export function useStudyStore(): StudyState {
 }
 
 export const studyActions = {
-  addFlashcard(question: string, answer: string) {
+  addFlashcard(subject: string, question: string, answer: string) {
     const card: Flashcard = {
       id: `custom-${Date.now()}`,
       question: question.trim(),
       answer: answer.trim(),
     };
-    setState({ customCards: [...state.customCards, card] });
+    const existing = state.cardsBySubject[subject] ?? [];
+    setState({ cardsBySubject: { ...state.cardsBySubject, [subject]: [...existing, card] } });
   },
   markStudied(id: string) {
     if (state.studiedCardIds.includes(id)) return;
@@ -80,10 +93,10 @@ export const studyActions = {
   },
   addSubject(name: string) {
     const trimmed = name.trim();
-    if (!trimmed) return;
+    if (!trimmed || state.extraSubjects.includes(trimmed) || trimmed === "History") return;
     setState({ extraSubjects: [...state.extraSubjects, trimmed] });
   },
   resetProgress() {
-    setState({ ...DEFAULT_STATE, customCards: state.customCards, extraSubjects: state.extraSubjects });
+    setState({ ...DEFAULT_STATE, cardsBySubject: state.cardsBySubject, extraSubjects: state.extraSubjects });
   },
 };

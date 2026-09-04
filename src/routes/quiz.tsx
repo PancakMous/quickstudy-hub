@@ -91,6 +91,7 @@ function QuizPage() {
             </button>
             <Link
               to="/flashcards"
+              search={{ subject: "History" }}
               className="rounded-full border border-brand/25 bg-white/60 px-6 py-3 font-bold text-brand transition hover:bg-white"
             >
               Review flashcards
