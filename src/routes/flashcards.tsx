@@ -5,7 +5,10 @@ import { useStudyStore, studyActions } from "@/lib/study-store";
 
 export const Route = createFileRoute("/flashcards")({
   validateSearch: (search: Record<string, unknown>) => ({
-    subject: typeof search.subject === "string" && search.subject.trim() ? search.subject : "History",
+    subject:
+      typeof search["subject"] === "string" && search["subject"].trim()
+        ? search["subject"]
+        : "History",
   }),
   head: () => ({
     meta: [
