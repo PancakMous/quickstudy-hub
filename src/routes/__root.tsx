@@ -118,13 +118,58 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const NAV_ITEMS = [
+  { to: "/", label: "Home" },
+  { to: "/flashcards", label: "Flashcards" },
+  { to: "/quiz", label: "Quiz" },
+  { to: "/progress", label: "Progress" },
+] as const;
+
+function AppNav() {
+  return (
+    <header className="sticky top-4 z-30 mx-auto max-w-6xl px-4">
+      <nav className="flex items-center justify-between rounded-full border border-white/60 bg-white/55 px-4 py-2.5 shadow-lg shadow-brand/10 backdrop-blur-xl">
+        <Link to="/" className="flex items-center gap-2.5 pl-1">
+          <span className="grid size-9 place-items-center rounded-2xl bg-gradient-to-br from-brand to-accent text-white shadow-md shadow-brand/30 font-display">
+            <span className="text-lg font-bold leading-none">Q</span>
+          </span>
+          <span className="text-lg font-bold tracking-tight text-ink font-display">QuickStudy</span>
+        </Link>
+        <div className="flex items-center gap-1 rounded-full p-1">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              activeOptions={{ exact: item.to === "/" }}
+              className="rounded-full px-3 sm:px-4 py-1.5 text-sm font-semibold transition"
+              activeProps={{ className: "bg-white/80 text-brand shadow-sm" }}
+              inactiveProps={{ className: "text-ink/55 hover:text-ink" }}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="min-h-screen">
+        {/* decorative pastel blobs */}
+        <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+          <div className="absolute -top-24 -left-24 size-[420px] rounded-full bg-brand/25 blur-3xl" />
+          <div className="absolute top-1/3 -right-32 size-[380px] rounded-full bg-accent/25 blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 size-[340px] rounded-full bg-mint/40 blur-3xl" />
+        </div>
+        <AppNav />
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </div>
     </QueryClientProvider>
   );
 }
