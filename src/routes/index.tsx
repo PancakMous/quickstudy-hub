@@ -16,11 +16,11 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { extraSubjects, customCards } = useStudyStore();
+  const { extraSubjects, cardsBySubject } = useStudyStore();
   const [showNewSubject, setShowNewSubject] = useState(false);
   const [subjectName, setSubjectName] = useState("");
 
-  const totalCards = HISTORY_FLASHCARDS.length + customCards.length;
+  const totalCards = HISTORY_FLASHCARDS.length + (cardsBySubject["History"] ?? []).length;
 
   const submitSubject = () => {
     if (!subjectName.trim()) return;
@@ -50,6 +50,7 @@ function HomePage() {
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               to="/flashcards"
+              search={{ subject: "History" }}
               className="rounded-full bg-brand px-6 py-3 font-bold text-white shadow-lg shadow-brand/30 transition hover:brightness-105"
             >
               Open History
@@ -78,6 +79,7 @@ function HomePage() {
         <div className="grid gap-5 sm:grid-cols-3">
           <Link
             to="/flashcards"
+            search={{ subject: "History" }}
             className="group rounded-3xl border border-white/60 bg-gradient-to-br from-brand/12 to-accent/10 p-6 shadow-lg shadow-brand/10 backdrop-blur-xl transition hover:-translate-y-1"
           >
             <div className="mb-5 grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-brand to-accent text-2xl shadow-md shadow-brand/30">
@@ -97,26 +99,32 @@ function HomePage() {
             </div>
           </Link>
 
-          {extraSubjects.map((name) => (
-            <div
-              key={name}
-              className="rounded-3xl border border-white/60 bg-white/40 p-6 shadow-lg shadow-brand/10 backdrop-blur-xl"
-            >
-              <div className="mb-5 grid size-14 place-items-center rounded-2xl bg-sky/60 text-2xl">
-                📚
-              </div>
-              <h3 className="text-xl font-bold text-ink font-display">{name}</h3>
-              <p className="mt-1 text-sm text-ink/55">No content yet — add flashcards to get started.</p>
-              <div className="mt-4">
-                <Link
-                  to="/flashcards"
-                  className="rounded-full bg-white/70 px-2.5 py-1 text-xs font-semibold text-brand"
-                >
-                  Add flashcards →
-                </Link>
-              </div>
-            </div>
-          ))}
+          {extraSubjects.map((name) => {
+            const count = (cardsBySubject[name] ?? []).length;
+            return (
+              <Link
+                key={name}
+                to="/flashcards"
+                search={{ subject: name }}
+                className="group rounded-3xl border border-white/60 bg-white/40 p-6 shadow-lg shadow-brand/10 backdrop-blur-xl transition hover:-translate-y-1"
+              >
+                <div className="mb-5 grid size-14 place-items-center rounded-2xl bg-sky/60 text-2xl">
+                  📚
+                </div>
+                <h3 className="text-xl font-bold text-ink font-display">{name}</h3>
+                <p className="mt-1 text-sm text-ink/55">
+                  {count === 0
+                    ? "No cards yet — add flashcards to get started."
+                    : `Your custom ${name} deck.`}
+                </p>
+                <div className="mt-4">
+                  <span className="rounded-full bg-white/70 px-2.5 py-1 text-xs font-semibold text-ink/60">
+                    {count} flashcard{count === 1 ? "" : "s"}
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
 
           {showNewSubject ? (
             <div className="rounded-3xl border-2 border-dashed border-brand/25 bg-white/30 p-6 backdrop-blur-xl">
