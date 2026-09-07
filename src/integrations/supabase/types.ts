@@ -14,7 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      study_materials: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number
+          id: string
+          public_url: string
+          storage_path: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: number
+          id?: string
+          public_url: string
+          storage_path: string
+          subject?: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          id?: string
+          public_url?: string
+          storage_path?: string
+          subject?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
