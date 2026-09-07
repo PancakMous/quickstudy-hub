@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FlashcardsRouteImport } from './routes/flashcards'
+import { Route as MaterialsRouteImport } from './routes/materials'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as QuizRouteImport } from './routes/quiz'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const FlashcardsRoute = FlashcardsRouteImport.update({
   id: '/flashcards',
   path: '/flashcards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaterialsRoute = MaterialsRouteImport.update({
+  id: '/materials',
+  path: '/materials',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProgressRoute = ProgressRouteImport.update({
@@ -38,12 +44,14 @@ const QuizRoute = QuizRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/flashcards': typeof FlashcardsRoute
+  '/materials': typeof MaterialsRoute
   '/progress': typeof ProgressRoute
   '/quiz': typeof QuizRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/flashcards': typeof FlashcardsRoute
+  '/materials': typeof MaterialsRoute
   '/progress': typeof ProgressRoute
   '/quiz': typeof QuizRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/flashcards': typeof FlashcardsRoute
+  '/materials': typeof MaterialsRoute
   '/progress': typeof ProgressRoute
   '/quiz': typeof QuizRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/flashcards' | '/progress' | '/quiz'
+  fullPaths: '/' | '/flashcards' | '/materials' | '/progress' | '/quiz'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/flashcards' | '/progress' | '/quiz'
-  id: '__root__' | '/' | '/flashcards' | '/progress' | '/quiz'
+  to: '/' | '/flashcards' | '/materials' | '/progress' | '/quiz'
+  id: '__root__' | '/' | '/flashcards' | '/materials' | '/progress' | '/quiz'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FlashcardsRoute: typeof FlashcardsRoute
+  MaterialsRoute: typeof MaterialsRoute
   ProgressRoute: typeof ProgressRoute
   QuizRoute: typeof QuizRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/flashcards'
       fullPath: '/flashcards'
       preLoaderRoute: typeof FlashcardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/materials': {
+      id: '/materials'
+      path: '/materials'
+      fullPath: '/materials'
+      preLoaderRoute: typeof MaterialsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/progress': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FlashcardsRoute: FlashcardsRoute,
+  MaterialsRoute: MaterialsRoute,
   ProgressRoute: ProgressRoute,
   QuizRoute: QuizRoute,
 }
