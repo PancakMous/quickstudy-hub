@@ -6,9 +6,9 @@ import { useStudyStore, studyActions } from "@/lib/study-store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "QuickStudy — Learn faster with flashcards and quizzes" },
+      { title: "QuickStudy - Learn faster with flashcards and quizzes" },
       { name: "description", content: "Study History with interactive flashcards and quizzes. Track your progress and learn faster with QuickStudy." },
-      { property: "og:title", content: "QuickStudy — Learn faster with flashcards and quizzes" },
+      { property: "og:title", content: "QuickStudy - Learn faster with flashcards and quizzes" },
       { property: "og:description", content: "Study History with interactive flashcards and quizzes. Track your progress and learn faster with QuickStudy." },
     ],
   }),
@@ -45,7 +45,7 @@ function HomePage() {
             </span>
           </h1>
           <p className="mt-4 text-lg text-ink/60">
-            Flip through cards, test yourself, and watch your mastery grow — one subject at a time.
+            Flip through cards, test yourself, and watch your mastery grow - one subject at a time.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
@@ -114,7 +114,7 @@ function HomePage() {
                 <h3 className="text-xl font-bold text-ink font-display">{name}</h3>
                 <p className="mt-1 text-sm text-ink/55">
                   {count === 0
-                    ? "No cards yet — add flashcards to get started."
+                    ? "No cards yet - add flashcards to get started."
                     : `Your custom ${name} deck.`}
                 </p>
                 <div className="mt-4">

@@ -6,13 +6,13 @@ import { useStudyStore, studyActions } from "@/lib/study-store";
 export const Route = createFileRoute("/materials")({
   head: () => ({
     meta: [
-      { title: "Study Materials — QuickStudy" },
+      { title: "Study Materials - QuickStudy" },
       {
         name: "description",
         content:
           "Upload your PDF notes and textbooks to QuickStudy, read them in the app, and turn them into flashcards.",
       },
-      { property: "og:title", content: "Study Materials — QuickStudy" },
+      { property: "og:title", content: "Study Materials - QuickStudy" },
       {
         property: "og:description",
         content:
@@ -83,7 +83,7 @@ function MaterialsPage() {
       return;
     }
     if (file.size > MAX_BYTES) {
-      setError(`That file is ${formatSize(file.size)} — the limit is 20 MB.`);
+      setError(`That file is ${formatSize(file.size)} - the limit is 20 MB.`);
       return;
     }
 
@@ -245,7 +245,7 @@ function MaterialsPage() {
           )}
           {saved && !error && !uploading && (
             <p className="mt-4 rounded-2xl border border-mint bg-mint/40 px-4 py-3 text-sm font-semibold text-ink/70">
-              Uploaded — it's now in your {subject} library below.
+              Uploaded - it's now in your {subject} library below.
             </p>
           )}
         </section>

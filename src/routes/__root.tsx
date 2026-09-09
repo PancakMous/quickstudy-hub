@@ -77,9 +77,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "QuickStudy — Learn faster with flashcards and quizzes" },
+      { title: "QuickStudy - Learn faster with flashcards and quizzes" },
       { name: "description", content: "QuickStudy helps students learn faster with interactive flashcards and quizzes, starting with History." },
-      { property: "og:title", content: "QuickStudy — Learn faster with flashcards and quizzes" },
+      { property: "og:title", content: "QuickStudy - Learn faster with flashcards and quizzes" },
       { property: "og:description", content: "QuickStudy helps students learn faster with interactive flashcards and quizzes, starting with History." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

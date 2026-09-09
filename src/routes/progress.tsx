@@ -5,9 +5,9 @@ import { EMPTY_QUIZ_STATS, useStudyStore } from "@/lib/study-store";
 export const Route = createFileRoute("/progress")({
   head: () => ({
     meta: [
-      { title: "Progress — QuickStudy" },
+      { title: "Progress - QuickStudy" },
       { name: "description", content: "Track your QuickStudy progress subject by subject: flashcards studied, last quiz score, best score and quizzes completed." },
-      { property: "og:title", content: "Progress — QuickStudy" },
+      { property: "og:title", content: "Progress - QuickStudy" },
       { property: "og:description", content: "Track your QuickStudy progress subject by subject: flashcards studied, last quiz score, best score and quizzes completed." },
     ],
   }),
@@ -126,7 +126,7 @@ function ProgressPage() {
                   {s.stats.bestQuizPercent !== null ? (
                     `${s.stats.bestQuizPercent}%`
                   ) : (
-                    <span className="text-lg text-ink/40">—</span>
+                    <span className="text-lg text-ink/40">-</span>
                   )}
                 </p>
                 <div className="mt-3 h-2.5 rounded-full bg-ink/10">

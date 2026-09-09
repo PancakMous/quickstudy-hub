@@ -12,9 +12,9 @@ export const Route = createFileRoute("/quiz")({
   }),
   head: () => ({
     meta: [
-      { title: "Quiz — QuickStudy" },
+      { title: "Quiz - QuickStudy" },
       { name: "description", content: "Test your knowledge with a multiple-choice quiz on any of your QuickStudy subjects and see your final score." },
-      { property: "og:title", content: "Quiz — QuickStudy" },
+      { property: "og:title", content: "Quiz - QuickStudy" },
       { property: "og:description", content: "Test your knowledge with a multiple-choice quiz on any of your QuickStudy subjects and see your final score." },
     ],
   }),
@@ -182,7 +182,7 @@ function QuizPage() {
       </div>
       {subject !== "History" && (cardsBySubject[subject]?.length ?? 0) < 4 && (
         <p className="mt-3 text-sm font-semibold text-ink/50">
-          {subject} needs at least 4 flashcards to make a quiz —{" "}
+          {subject} needs at least 4 flashcards to make a quiz -{" "}
           <Link to="/flashcards" search={{ subject }} className="text-brand hover:underline">
             add some here
           </Link>
@@ -200,7 +200,7 @@ function QuizPage() {
         : percent >= 80
           ? "Excellent work! 🌟"
           : percent >= 60
-            ? "Good job — keep reviewing! 📚"
+            ? "Good job - keep reviewing! 📚"
             : "Review the flashcards and try again! 💪";
     return (
       <main className="mx-auto max-w-6xl px-4 pt-10 pb-14 sm:pt-16">

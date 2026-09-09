@@ -12,9 +12,9 @@ export const Route = createFileRoute("/flashcards")({
   }),
   head: () => ({
     meta: [
-      { title: "Flashcards — QuickStudy" },
+      { title: "Flashcards - QuickStudy" },
       { name: "description", content: "Flip through interactive flashcards for each of your subjects on QuickStudy." },
-      { property: "og:title", content: "Flashcards — QuickStudy" },
+      { property: "og:title", content: "Flashcards - QuickStudy" },
       { property: "og:description", content: "Flip through interactive flashcards for each of your subjects on QuickStudy." },
     ],
   }),
@@ -202,7 +202,7 @@ function FlashcardsPage() {
             <div className="py-16 text-center">
               <p className="text-lg font-bold text-ink font-display">No flashcards yet</p>
               <p className="mt-1 text-sm text-ink/55">
-                Add your first {subject} flashcard using the form — it will only appear in this
+                Add your first {subject} flashcard using the form - it will only appear in this
                 subject.
               </p>
             </div>
