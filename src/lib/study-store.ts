@@ -1,6 +1,12 @@
 import { useSyncExternalStore } from "react";
 import type { Flashcard } from "./study-data";
 
+export type SubjectQuizStats = {
+  lastQuiz: { score: number; total: number } | null;
+  bestQuizPercent: number | null;
+  quizzesTaken: number;
+};
+
 export type StudyState = {
   /** Custom flashcards, keyed by subject name (e.g. "History", "Biology"). */
   cardsBySubject: Record<string, Flashcard[]>;
@@ -8,7 +14,15 @@ export type StudyState = {
   lastQuiz: { score: number; total: number } | null;
   bestQuizPercent: number | null;
   quizzesTaken: number;
+  /** Quiz stats per subject name. */
+  quizBySubject: Record<string, SubjectQuizStats>;
   extraSubjects: string[];
+};
+
+export const EMPTY_QUIZ_STATS: SubjectQuizStats = {
+  lastQuiz: null,
+  bestQuizPercent: null,
+  quizzesTaken: 0,
 };
 
 const STORAGE_KEY = "quickstudy-v2";
