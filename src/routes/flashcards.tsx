@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { HISTORY_FLASHCARDS } from "@/lib/study-data";
 import { useStudyStore, studyActions } from "@/lib/study-store";
@@ -23,7 +23,9 @@ export const Route = createFileRoute("/flashcards")({
 
 function FlashcardsPage() {
   const { subject } = Route.useSearch();
-  const { cardsBySubject, studiedCardIds } = useStudyStore();
+  const navigate = useNavigate();
+  const { cardsBySubject, studiedCardIds, extraSubjects } = useStudyStore();
+  const subjects = ["History", ...extraSubjects];
   const cards = useMemo(
     () =>
       subject === "History"
