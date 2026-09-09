@@ -33,6 +33,7 @@ const DEFAULT_STATE: StudyState = {
   lastQuiz: null,
   bestQuizPercent: null,
   quizzesTaken: 0,
+  quizBySubject: {},
   extraSubjects: [],
 };
 
