@@ -97,13 +97,23 @@ export const studyActions = {
     if (state.studiedCardIds.includes(id)) return;
     setState({ studiedCardIds: [...state.studiedCardIds, id] });
   },
-  recordQuiz(score: number, total: number) {
+  recordQuiz(subject: string, score: number, total: number) {
     const percent = Math.round((score / total) * 100);
+    const prev = state.quizBySubject[subject] ?? EMPTY_QUIZ_STATS;
     setState({
       lastQuiz: { score, total },
       bestQuizPercent:
         state.bestQuizPercent === null ? percent : Math.max(state.bestQuizPercent, percent),
       quizzesTaken: state.quizzesTaken + 1,
+      quizBySubject: {
+        ...state.quizBySubject,
+        [subject]: {
+          lastQuiz: { score, total },
+          bestQuizPercent:
+            prev.bestQuizPercent === null ? percent : Math.max(prev.bestQuizPercent, percent),
+          quizzesTaken: prev.quizzesTaken + 1,
+        },
+      },
     });
   },
   addSubject(name: string) {
