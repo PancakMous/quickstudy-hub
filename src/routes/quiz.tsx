@@ -114,7 +114,7 @@ function QuizPage() {
     );
     setFinalScore(score);
     setFinished(true);
-    studyActions.recordQuiz(score, quiz.length);
+    studyActions.recordQuiz(subject, score, quiz.length);
   };
 
   const restart = () => {
