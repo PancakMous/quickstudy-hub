@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HISTORY_QUIZ, HISTORY_FLASHCARDS, type QuizQuestion, type Flashcard } from "@/lib/study-data";
 import { studyActions, useStudyStore } from "@/lib/study-store";
 
@@ -12,9 +12,9 @@ export const Route = createFileRoute("/quiz")({
   }),
   head: () => ({
     meta: [
-      { title: "Quiz — QuickStudy" },
+      { title: "Quiz - QuickStudy" },
       { name: "description", content: "Test your knowledge with a multiple-choice quiz on any of your QuickStudy subjects and see your final score." },
-      { property: "og:title", content: "Quiz — QuickStudy" },
+      { property: "og:title", content: "Quiz - QuickStudy" },
       { property: "og:description", content: "Test your knowledge with a multiple-choice quiz on any of your QuickStudy subjects and see your final score." },
     ],
   }),
@@ -69,24 +69,44 @@ function QuizPage() {
     return null;
   }, [subject, generatedFor, generatedQuiz]);
 
-  const startSubjectQuiz = (name: string) => {
-    if (name !== "History") {
-      const cards = cardsBySubject[name] ?? [];
-      if (cards.length < 4) return;
-      setGeneratedQuiz(quizFromFlashcards(shuffle(cards).slice(0, 10)));
-      setGeneratedFor(name);
-    }
-    setAnswers([]);
-    setIndex(0);
-    setFinished(false);
-    setFinalScore(null);
-    if (name !== subject) navigate({ to: "/quiz", search: { subject: name } });
-  };
-
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [finished, setFinished] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
+
+  const resetRun = () => {
+    setAnswers([]);
+    setIndex(0);
+    setFinished(false);
+    setFinalScore(null);
+  };
+
+  const buildQuiz = (name: string) => {
+    const cards = cardsBySubject[name] ?? [];
+    if (cards.length < 4) {
+      setGeneratedQuiz(null);
+      setGeneratedFor(null);
+      return;
+    }
+    setGeneratedQuiz(quizFromFlashcards(shuffle(cards).slice(0, 10)));
+    setGeneratedFor(name);
+  };
+
+  // Whenever the selected subject changes, build its quiz and reset the run.
+  useEffect(() => {
+    resetRun();
+    if (subject !== "History") buildQuiz(subject);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subject]);
+
+  const startSubjectQuiz = (name: string) => {
+    if (name === subject) {
+      resetRun();
+      if (name !== "History") buildQuiz(name);
+      return;
+    }
+    navigate({ to: "/quiz", search: { subject: name } });
+  };
 
   const total = quiz?.length ?? 0;
   const padded = quiz ? Array.from({ length: total }, (_, i) => answers[i] ?? null) : [];
@@ -162,7 +182,7 @@ function QuizPage() {
       </div>
       {subject !== "History" && (cardsBySubject[subject]?.length ?? 0) < 4 && (
         <p className="mt-3 text-sm font-semibold text-ink/50">
-          {subject} needs at least 4 flashcards to make a quiz —{" "}
+          {subject} needs at least 4 flashcards to make a quiz -{" "}
           <Link to="/flashcards" search={{ subject }} className="text-brand hover:underline">
             add some here
           </Link>
@@ -180,7 +200,7 @@ function QuizPage() {
         : percent >= 80
           ? "Excellent work! 🌟"
           : percent >= 60
-            ? "Good job — keep reviewing! 📚"
+            ? "Good job - keep reviewing! 📚"
             : "Review the flashcards and try again! 💪";
     return (
       <main className="mx-auto max-w-6xl px-4 pt-10 pb-14 sm:pt-16">

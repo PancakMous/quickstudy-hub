@@ -67,7 +67,7 @@ function setState(next: Partial<StudyState>) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
-    // storage unavailable — keep in-memory
+    // storage unavailable - keep in-memory
   }
   listeners.forEach((l) => l());
 }
