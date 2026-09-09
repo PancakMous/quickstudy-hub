@@ -1,6 +1,12 @@
 import { useSyncExternalStore } from "react";
 import type { Flashcard } from "./study-data";
 
+export type SubjectQuizStats = {
+  lastQuiz: { score: number; total: number } | null;
+  bestQuizPercent: number | null;
+  quizzesTaken: number;
+};
+
 export type StudyState = {
   /** Custom flashcards, keyed by subject name (e.g. "History", "Biology"). */
   cardsBySubject: Record<string, Flashcard[]>;
@@ -8,7 +14,15 @@ export type StudyState = {
   lastQuiz: { score: number; total: number } | null;
   bestQuizPercent: number | null;
   quizzesTaken: number;
+  /** Quiz stats per subject name. */
+  quizBySubject: Record<string, SubjectQuizStats>;
   extraSubjects: string[];
+};
+
+export const EMPTY_QUIZ_STATS: SubjectQuizStats = {
+  lastQuiz: null,
+  bestQuizPercent: null,
+  quizzesTaken: 0,
 };
 
 const STORAGE_KEY = "quickstudy-v2";
@@ -19,6 +33,7 @@ const DEFAULT_STATE: StudyState = {
   lastQuiz: null,
   bestQuizPercent: null,
   quizzesTaken: 0,
+  quizBySubject: {},
   extraSubjects: [],
 };
 
@@ -82,13 +97,23 @@ export const studyActions = {
     if (state.studiedCardIds.includes(id)) return;
     setState({ studiedCardIds: [...state.studiedCardIds, id] });
   },
-  recordQuiz(score: number, total: number) {
+  recordQuiz(subject: string, score: number, total: number) {
     const percent = Math.round((score / total) * 100);
+    const prev = state.quizBySubject[subject] ?? EMPTY_QUIZ_STATS;
     setState({
       lastQuiz: { score, total },
       bestQuizPercent:
         state.bestQuizPercent === null ? percent : Math.max(state.bestQuizPercent, percent),
       quizzesTaken: state.quizzesTaken + 1,
+      quizBySubject: {
+        ...state.quizBySubject,
+        [subject]: {
+          lastQuiz: { score, total },
+          bestQuizPercent:
+            prev.bestQuizPercent === null ? percent : Math.max(prev.bestQuizPercent, percent),
+          quizzesTaken: prev.quizzesTaken + 1,
+        },
+      },
     });
   },
   addSubject(name: string) {
