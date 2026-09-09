@@ -45,6 +45,17 @@ function FlashcardsPage() {
     if (card) studyActions.markStudied(card.id);
   }, [card]);
 
+  // Reset position when switching subjects.
+  useEffect(() => {
+    setIndex(0);
+    setFlipped(false);
+  }, [subject]);
+
+  const switchSubject = (name: string) => {
+    if (name === subject) return;
+    navigate({ to: "/flashcards", search: { subject: name } });
+  };
+
   const goTo = (next: number) => {
     setIndex(next);
     setFlipped(false);
@@ -69,6 +80,39 @@ function FlashcardsPage() {
           <p className="text-sm text-ink/55">Tap the card to flip · {subject}</p>
         </div>
       </div>
+
+      <div className="card-glass mb-6 rounded-[2rem] p-5 sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.12em] text-ink/45">Choose a subject</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {subjects.map((name) => {
+            const active = name === subject;
+            const count =
+              name === "History"
+                ? HISTORY_FLASHCARDS.length + (cardsBySubject["History"]?.length ?? 0)
+                : (cardsBySubject[name]?.length ?? 0);
+            return (
+              <button
+                key={name}
+                onClick={() => switchSubject(name)}
+                aria-pressed={active}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  active
+                    ? "bg-brand text-white shadow-md shadow-brand/30"
+                    : "border border-brand/20 bg-white/60 text-ink/70 hover:bg-white"
+                }`}
+              >
+                {name}
+                <span
+                  className={`ml-2 text-xs font-semibold ${active ? "text-white/75" : "text-ink/35"}`}
+                >
+                  {count} cards
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="card-glass rounded-[2rem] p-6 sm:p-8">
