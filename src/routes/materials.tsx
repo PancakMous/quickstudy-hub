@@ -332,6 +332,22 @@ function MaterialsPage() {
               ))}
             </ul>
           )}
+
+          {generatingId && (
+            <p className="mt-4 rounded-2xl border border-white/70 bg-white/60 px-4 py-3 text-sm font-semibold text-ink/60">
+              Reading the whole PDF and writing your cards and quiz… this can take a minute.
+            </p>
+          )}
+          {genMessage && !generatingId && (
+            <p className="mt-4 rounded-2xl border border-mint bg-mint/40 px-4 py-3 text-sm font-semibold text-ink/70">
+              {genMessage}
+            </p>
+          )}
+          {genError && !generatingId && (
+            <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
+              {genError}
+            </p>
+          )}
         </aside>
       </div>
 
