@@ -35,10 +35,7 @@ function HomePage() {
       <section className="relative overflow-hidden rounded-[2.2rem] border border-white/60 bg-white/55 p-8 shadow-xl shadow-brand/10 backdrop-blur-xl sm:p-12">
         <div className="absolute -right-16 -top-16 size-56 rounded-full bg-peach/50 blur-2xl" />
         <div className="relative max-w-xl">
-          <span className="inline-flex items-center gap-2 rounded-full bg-mint/60 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-ink/70">
-            History · Ready to study
-          </span>
-          <h1 className="mt-4 text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-6xl font-display">
+          <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-6xl font-display">
             Learn faster with{" "}
             <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
               flashcards and quizzes.
@@ -47,21 +44,6 @@ function HomePage() {
           <p className="mt-4 text-lg text-ink/60">
             Flip through cards, test yourself, and watch your mastery grow - one subject at a time.
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link
-              to="/flashcards"
-              search={{ subject: "History" }}
-              className="rounded-full bg-brand px-6 py-3 font-bold text-white shadow-lg shadow-brand/30 transition hover:brightness-105"
-            >
-              Open History
-            </Link>
-            <button
-              onClick={() => setShowNewSubject(true)}
-              className="rounded-full border border-brand/25 bg-white/60 px-6 py-3 font-bold text-brand transition hover:bg-white"
-            >
-              Create new subject
-            </button>
-          </div>
         </div>
       </section>
 

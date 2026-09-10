@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useStudyStore, studyActions } from "@/lib/study-store";
+import { generateStudyMaterialFromPdf } from "@/lib/pdf-study.functions";
 
 export const Route = createFileRoute("/materials")({
   head: () => ({
@@ -56,6 +57,9 @@ function MaterialsPage() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [saved, setSaved] = useState(false);
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [genMessage, setGenMessage] = useState<string | null>(null);
+  const [genError, setGenError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const loadMaterials = useCallback(async () => {
@@ -135,6 +139,39 @@ function MaterialsPage() {
     await supabase.from("study_materials").delete().eq("id", material.id);
     if (openDoc?.material.id === material.id) setOpenDoc(null);
     await loadMaterials();
+  };
+
+  const generateFrom = async (material: Material) => {
+    setGeneratingId(material.id);
+    setGenMessage(null);
+    setGenError(null);
+    try {
+      const result = await generateStudyMaterialFromPdf({
+        data: { storagePath: material.storage_path },
+      });
+      studyActions.addFlashcards(material.subject, result.cards);
+      studyActions.addQuizQuestions(material.subject, result.quiz);
+      if (result.cards.length === 0 && result.quiz.length === 0) {
+        setGenError("Nothing usable could be pulled out of that PDF.");
+      } else {
+        setGenMessage(
+          `Read ${result.pages} page${result.pages === 1 ? "" : "s"} and made ${result.cards.length} flashcards and ${result.quiz.length} quiz questions for ${material.subject}.`,
+        );
+      }
+    } catch (e) {
+      const raw = e instanceof Error ? e.message : "";
+      setGenError(
+        raw.includes("RATE_LIMIT")
+          ? "Too many requests right now - please try again in a moment."
+          : raw.includes("NO_CREDITS")
+            ? "Your AI credits have run out. Add credits to keep generating."
+            : raw.includes("readable text")
+              ? "This PDF has no readable text (it looks like scanned images), so nothing could be generated."
+              : "Could not read that PDF. Please try again.",
+      );
+    } finally {
+      setGeneratingId(null);
+    }
   };
 
   const addCard = () => {
@@ -270,7 +307,14 @@ function MaterialsPage() {
                   <p className="mt-0.5 text-xs text-ink/45">
                     {m.subject} · {formatSize(m.file_size)}
                   </p>
-                  <div className="mt-2.5 flex gap-2">
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    <button
+                      onClick={() => void generateFrom(m)}
+                      disabled={generatingId !== null}
+                      className="rounded-full bg-brand px-3 py-1.5 text-xs font-bold text-white shadow-sm shadow-brand/30 transition hover:brightness-105 disabled:opacity-50"
+                    >
+                      {generatingId === m.id ? "Reading PDF…" : "Make cards & quiz"}
+                    </button>
                     <button
                       onClick={() => void openMaterial(m)}
                       className="rounded-full bg-brand/10 px-3 py-1.5 text-xs font-bold text-brand transition hover:bg-brand/20"
@@ -287,6 +331,22 @@ function MaterialsPage() {
                 </li>
               ))}
             </ul>
+          )}
+
+          {generatingId && (
+            <p className="mt-4 rounded-2xl border border-white/70 bg-white/60 px-4 py-3 text-sm font-semibold text-ink/60">
+              Reading the whole PDF and writing your cards and quiz… this can take a minute.
+            </p>
+          )}
+          {genMessage && !generatingId && (
+            <p className="mt-4 rounded-2xl border border-mint bg-mint/40 px-4 py-3 text-sm font-semibold text-ink/70">
+              {genMessage}
+            </p>
+          )}
+          {genError && !generatingId && (
+            <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
+              {genError}
+            </p>
           )}
         </aside>
       </div>

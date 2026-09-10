@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import type { Flashcard } from "./study-data";
+import type { Flashcard, QuizQuestion } from "./study-data";
 
 export type SubjectQuizStats = {
   lastQuiz: { score: number; total: number } | null;
@@ -16,6 +16,8 @@ export type StudyState = {
   quizzesTaken: number;
   /** Quiz stats per subject name. */
   quizBySubject: Record<string, SubjectQuizStats>;
+  /** Quiz questions generated from uploaded PDFs, keyed by subject name. */
+  quizQuestionsBySubject: Record<string, QuizQuestion[]>;
   extraSubjects: string[];
 };
 
@@ -34,6 +36,7 @@ const DEFAULT_STATE: StudyState = {
   bestQuizPercent: null,
   quizzesTaken: 0,
   quizBySubject: {},
+  quizQuestionsBySubject: {},
   extraSubjects: [],
 };
 
@@ -92,6 +95,41 @@ export const studyActions = {
     };
     const existing = state.cardsBySubject[subject] ?? [];
     setState({ cardsBySubject: { ...state.cardsBySubject, [subject]: [...existing, card] } });
+  },
+  addFlashcards(subject: string, cards: { question: string; answer: string }[]) {
+    if (!cards.length) return;
+    const stamp = Date.now();
+    const existing = state.cardsBySubject[subject] ?? [];
+    const seen = new Set(existing.map((c) => c.question.trim().toLowerCase()));
+    const fresh: Flashcard[] = [];
+    cards.forEach((c, i) => {
+      const key = c.question.trim().toLowerCase();
+      if (!key || !c.answer.trim() || seen.has(key)) return;
+      seen.add(key);
+      fresh.push({ id: `pdf-${stamp}-${i}`, question: c.question.trim(), answer: c.answer.trim() });
+    });
+    if (!fresh.length) return;
+    setState({ cardsBySubject: { ...state.cardsBySubject, [subject]: [...existing, ...fresh] } });
+  },
+  addQuizQuestions(subject: string, questions: Omit<QuizQuestion, "id">[]) {
+    if (!questions.length) return;
+    const stamp = Date.now();
+    const existing = state.quizQuestionsBySubject[subject] ?? [];
+    const seen = new Set(existing.map((q) => q.question.trim().toLowerCase()));
+    const fresh: QuizQuestion[] = [];
+    questions.forEach((q, i) => {
+      const key = q.question.trim().toLowerCase();
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      fresh.push({ id: `pdfq-${stamp}-${i}`, ...q, question: q.question.trim() });
+    });
+    if (!fresh.length) return;
+    setState({
+      quizQuestionsBySubject: {
+        ...state.quizQuestionsBySubject,
+        [subject]: [...existing, ...fresh],
+      },
+    });
   },
   markStudied(id: string) {
     if (state.studiedCardIds.includes(id)) return;

@@ -51,7 +51,7 @@ function quizFromFlashcards(cards: Flashcard[]): QuizQuestion[] {
 function QuizPage() {
   const { subject } = Route.useSearch();
   const navigate = useNavigate();
-  const { cardsBySubject, extraSubjects } = useStudyStore();
+  const { cardsBySubject, extraSubjects, quizQuestionsBySubject } = useStudyStore();
 
   const subjects = ["History", ...extraSubjects];
   const flashcardCount = (name: string) =>
@@ -63,9 +63,11 @@ function QuizPage() {
   const [generatedFor, setGeneratedFor] = useState<string | null>(null);
   const [generatedQuiz, setGeneratedQuiz] = useState<QuizQuestion[] | null>(null);
 
+  const pdfQuestionCount = (name: string) => quizQuestionsBySubject[name]?.length ?? 0;
+
   const quiz: QuizQuestion[] | null = useMemo(() => {
+    if (generatedFor === subject && generatedQuiz) return generatedQuiz;
     if (subject === "History") return HISTORY_QUIZ;
-    if (generatedFor === subject) return generatedQuiz;
     return null;
   }, [subject, generatedFor, generatedQuiz]);
 
@@ -82,6 +84,13 @@ function QuizPage() {
   };
 
   const buildQuiz = (name: string) => {
+    // Questions generated from an uploaded PDF take priority.
+    const fromPdf = quizQuestionsBySubject[name] ?? [];
+    if (fromPdf.length > 0) {
+      setGeneratedQuiz(shuffle(fromPdf).slice(0, 10));
+      setGeneratedFor(name);
+      return;
+    }
     const cards = cardsBySubject[name] ?? [];
     if (cards.length < 4) {
       setGeneratedQuiz(null);
@@ -95,14 +104,14 @@ function QuizPage() {
   // Whenever the selected subject changes, build its quiz and reset the run.
   useEffect(() => {
     resetRun();
-    if (subject !== "History") buildQuiz(subject);
+    buildQuiz(subject);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subject]);
+  }, [subject, quizQuestionsBySubject]);
 
   const startSubjectQuiz = (name: string) => {
     if (name === subject) {
       resetRun();
-      if (name !== "History") buildQuiz(name);
+      buildQuiz(name);
       return;
     }
     navigate({ to: "/quiz", search: { subject: name } });
@@ -155,7 +164,7 @@ function QuizPage() {
         {subjects.map((name) => {
           const active = name === subject;
           const cards = flashcardCount(name);
-          const quizReady = name === "History" ? true : cards >= 4;
+          const quizReady = name === "History" ? true : cards >= 4 || pdfQuestionCount(name) > 0;
           return (
             <button
               key={name}
@@ -180,7 +189,9 @@ function QuizPage() {
           );
         })}
       </div>
-      {subject !== "History" && (cardsBySubject[subject]?.length ?? 0) < 4 && (
+      {subject !== "History" &&
+        pdfQuestionCount(subject) === 0 &&
+        (cardsBySubject[subject]?.length ?? 0) < 4 && (
         <p className="mt-3 text-sm font-semibold text-ink/50">
           {subject} needs at least 4 flashcards to make a quiz -{" "}
           <Link to="/flashcards" search={{ subject }} className="text-brand hover:underline">
