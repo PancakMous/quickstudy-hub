@@ -84,6 +84,13 @@ function QuizPage() {
   };
 
   const buildQuiz = (name: string) => {
+    // Questions generated from an uploaded PDF take priority.
+    const fromPdf = quizQuestionsBySubject[name] ?? [];
+    if (fromPdf.length > 0) {
+      setGeneratedQuiz(shuffle(fromPdf).slice(0, 10));
+      setGeneratedFor(name);
+      return;
+    }
     const cards = cardsBySubject[name] ?? [];
     if (cards.length < 4) {
       setGeneratedQuiz(null);
@@ -97,14 +104,14 @@ function QuizPage() {
   // Whenever the selected subject changes, build its quiz and reset the run.
   useEffect(() => {
     resetRun();
-    if (subject !== "History") buildQuiz(subject);
+    buildQuiz(subject);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subject]);
+  }, [subject, quizQuestionsBySubject]);
 
   const startSubjectQuiz = (name: string) => {
     if (name === subject) {
       resetRun();
-      if (name !== "History") buildQuiz(name);
+      buildQuiz(name);
       return;
     }
     navigate({ to: "/quiz", search: { subject: name } });
