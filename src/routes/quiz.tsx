@@ -63,9 +63,11 @@ function QuizPage() {
   const [generatedFor, setGeneratedFor] = useState<string | null>(null);
   const [generatedQuiz, setGeneratedQuiz] = useState<QuizQuestion[] | null>(null);
 
+  const pdfQuestionCount = (name: string) => quizQuestionsBySubject[name]?.length ?? 0;
+
   const quiz: QuizQuestion[] | null = useMemo(() => {
+    if (generatedFor === subject && generatedQuiz) return generatedQuiz;
     if (subject === "History") return HISTORY_QUIZ;
-    if (generatedFor === subject) return generatedQuiz;
     return null;
   }, [subject, generatedFor, generatedQuiz]);
 
