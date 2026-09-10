@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import type { Flashcard } from "./study-data";
+import type { Flashcard, QuizQuestion } from "./study-data";
 
 export type SubjectQuizStats = {
   lastQuiz: { score: number; total: number } | null;
@@ -16,6 +16,8 @@ export type StudyState = {
   quizzesTaken: number;
   /** Quiz stats per subject name. */
   quizBySubject: Record<string, SubjectQuizStats>;
+  /** Quiz questions generated from uploaded PDFs, keyed by subject name. */
+  quizQuestionsBySubject: Record<string, QuizQuestion[]>;
   extraSubjects: string[];
 };
 
