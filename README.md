@@ -1,7 +1,7 @@
 # QuickStudy Hub
 
 Build a modern, clean, and functional web app called QuickStudy.
-
+labas
 App Purpose
 
 QuickStudy is a learning app that helps students study different subjects using flashcards and quizzes. For the first version, the main focus should be History, with history questions and flashcards.
