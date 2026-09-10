@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useStudyStore, studyActions } from "@/lib/study-store";
+import { generateStudyMaterialFromPdf } from "@/lib/pdf-study.functions";
 
 export const Route = createFileRoute("/materials")({
   head: () => ({
