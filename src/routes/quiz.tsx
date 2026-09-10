@@ -164,7 +164,7 @@ function QuizPage() {
         {subjects.map((name) => {
           const active = name === subject;
           const cards = flashcardCount(name);
-          const quizReady = name === "History" ? true : cards >= 4;
+          const quizReady = name === "History" ? true : cards >= 4 || pdfQuestionCount(name) > 0;
           return (
             <button
               key={name}
@@ -189,7 +189,9 @@ function QuizPage() {
           );
         })}
       </div>
-      {subject !== "History" && (cardsBySubject[subject]?.length ?? 0) < 4 && (
+      {subject !== "History" &&
+        pdfQuestionCount(subject) === 0 &&
+        (cardsBySubject[subject]?.length ?? 0) < 4 && (
         <p className="mt-3 text-sm font-semibold text-ink/50">
           {subject} needs at least 4 flashcards to make a quiz -{" "}
           <Link to="/flashcards" search={{ subject }} className="text-brand hover:underline">
