@@ -307,7 +307,14 @@ function MaterialsPage() {
                   <p className="mt-0.5 text-xs text-ink/45">
                     {m.subject} · {formatSize(m.file_size)}
                   </p>
-                  <div className="mt-2.5 flex gap-2">
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    <button
+                      onClick={() => void generateFrom(m)}
+                      disabled={generatingId !== null}
+                      className="rounded-full bg-brand px-3 py-1.5 text-xs font-bold text-white shadow-sm shadow-brand/30 transition hover:brightness-105 disabled:opacity-50"
+                    >
+                      {generatingId === m.id ? "Reading PDF…" : "Make cards & quiz"}
+                    </button>
                     <button
                       onClick={() => void openMaterial(m)}
                       className="rounded-full bg-brand/10 px-3 py-1.5 text-xs font-bold text-brand transition hover:bg-brand/20"
