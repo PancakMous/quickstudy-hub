@@ -51,7 +51,7 @@ function quizFromFlashcards(cards: Flashcard[]): QuizQuestion[] {
 function QuizPage() {
   const { subject } = Route.useSearch();
   const navigate = useNavigate();
-  const { cardsBySubject, extraSubjects } = useStudyStore();
+  const { cardsBySubject, extraSubjects, quizQuestionsBySubject } = useStudyStore();
 
   const subjects = ["History", ...extraSubjects];
   const flashcardCount = (name: string) =>
