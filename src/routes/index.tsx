@@ -44,21 +44,6 @@ function HomePage() {
           <p className="mt-4 text-lg text-ink/60">
             Flip through cards, test yourself, and watch your mastery grow - one subject at a time.
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link
-              to="/flashcards"
-              search={{ subject: "History" }}
-              className="rounded-full bg-brand px-6 py-3 font-bold text-white shadow-lg shadow-brand/30 transition hover:brightness-105"
-            >
-              Open History
-            </Link>
-            <button
-              onClick={() => setShowNewSubject(true)}
-              className="rounded-full border border-brand/25 bg-white/60 px-6 py-3 font-bold text-brand transition hover:bg-white"
-            >
-              Create new subject
-            </button>
-          </div>
         </div>
       </section>
 
