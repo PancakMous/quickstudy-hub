@@ -35,10 +35,7 @@ function HomePage() {
       <section className="relative overflow-hidden rounded-[2.2rem] border border-white/60 bg-white/55 p-8 shadow-xl shadow-brand/10 backdrop-blur-xl sm:p-12">
         <div className="absolute -right-16 -top-16 size-56 rounded-full bg-peach/50 blur-2xl" />
         <div className="relative max-w-xl">
-          <span className="inline-flex items-center gap-2 rounded-full bg-mint/60 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-ink/70">
-            History · Ready to study
-          </span>
-          <h1 className="mt-4 text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-6xl font-display">
+          <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-6xl font-display">
             Learn faster with{" "}
             <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
               flashcards and quizzes.
