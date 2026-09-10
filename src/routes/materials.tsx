@@ -57,6 +57,9 @@ function MaterialsPage() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [saved, setSaved] = useState(false);
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [genMessage, setGenMessage] = useState<string | null>(null);
+  const [genError, setGenError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const loadMaterials = useCallback(async () => {
@@ -136,6 +139,39 @@ function MaterialsPage() {
     await supabase.from("study_materials").delete().eq("id", material.id);
     if (openDoc?.material.id === material.id) setOpenDoc(null);
     await loadMaterials();
+  };
+
+  const generateFrom = async (material: Material) => {
+    setGeneratingId(material.id);
+    setGenMessage(null);
+    setGenError(null);
+    try {
+      const result = await generateStudyMaterialFromPdf({
+        data: { storagePath: material.storage_path },
+      });
+      studyActions.addFlashcards(material.subject, result.cards);
+      studyActions.addQuizQuestions(material.subject, result.quiz);
+      if (result.cards.length === 0 && result.quiz.length === 0) {
+        setGenError("Nothing usable could be pulled out of that PDF.");
+      } else {
+        setGenMessage(
+          `Read ${result.pages} page${result.pages === 1 ? "" : "s"} and made ${result.cards.length} flashcards and ${result.quiz.length} quiz questions for ${material.subject}.`,
+        );
+      }
+    } catch (e) {
+      const raw = e instanceof Error ? e.message : "";
+      setGenError(
+        raw.includes("RATE_LIMIT")
+          ? "Too many requests right now - please try again in a moment."
+          : raw.includes("NO_CREDITS")
+            ? "Your AI credits have run out. Add credits to keep generating."
+            : raw.includes("readable text")
+              ? "This PDF has no readable text (it looks like scanned images), so nothing could be generated."
+              : "Could not read that PDF. Please try again.",
+      );
+    } finally {
+      setGeneratingId(null);
+    }
   };
 
   const addCard = () => {
